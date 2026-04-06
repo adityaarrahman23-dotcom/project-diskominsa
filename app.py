@@ -190,8 +190,8 @@ with tab3:
         kata_kunci = st.text_input("🔍 Cari berdasarkan Nama Kabupaten atau Kecamatan...")
         df_tampil = df_final.copy()
         if kata_kunci:
-            mask = (df_tampil['Nama Kabupaten/Kota'].str.contains(kata_kunci, case=False)) | \
-                   (df_tampil['Nama Kecamatan'].str.contains(kata_kunci, case=False))
+            mask = (df_tampil['Nama Kabupaten/Kota'].astype(str).str.contains(kata_kunci, case=False)) | \
+                   (df_tampil['Nama Kecamatan'].astype(str).str.contains(kata_kunci, case=False))
             df_tampil = df_tampil[mask]
             
         st.dataframe(df_tampil, use_container_width=True)
@@ -199,17 +199,20 @@ with tab3:
         st.divider()
         
         # Unduh Data
-        buffer = io.BytesIO()
-        with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
-            df_tampil.to_excel(writer, index=False, sheet_name='Data_Gabungan')
+        try:
+            buffer = io.BytesIO()
+            with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+                df_tampil.to_excel(writer, index=False, sheet_name='Data_Gabungan')
             
-        st.download_button(
-            label="⬇️ Unduh File Master Agregasi (.xlsx)",
-            data=buffer.getvalue(),
-            file_name=f"Master_Agregasi_{time.strftime('%Y%m%d')}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            type="primary",
-            use_container_width=True
-        )
+            st.download_button(
+                label="⬇️ Unduh File Master Agregasi (.xlsx)",
+                data=buffer.getvalue(),
+                file_name=f"Master_Agregasi_{time.strftime('%Y%m%d')}.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                type="primary",
+                use_container_width=True
+            )
+        except Exception as e:
+            st.error(f"Gagal membuat file Excel: {e}. Pastikan library 'openpyxl' terinstal di server.")
     else:
         st.info("Sistem kosong. Silahkan proses data di Tab 1 atau Tab 2 terlebih dahulu.")
