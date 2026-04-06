@@ -131,7 +131,7 @@ with tab2:
                         # Deteksi kolom Kabupaten dan Kecamatan (asumsi 2 kolom pertama)
                         id_vars_cols = [df_excel_lama.columns[0], df_excel_lama.columns[1]]
                         
-                        # Buang kolom 'TOTAL KESELURUHAN' jika ada
+                        # Buang kolom 'TOTAL KESELURUHAN' jika ada agar tidak dihitung kembali
                         if 'TOTAL KESELURUHAN' in df_excel_lama.columns:
                             df_excel_lama = df_excel_lama.drop(columns=['TOTAL KESELURUHAN'])
                             
@@ -175,8 +175,7 @@ with tab3:
             values='Nilai_Kalkulasi'
         ).fillna(0).reset_index()
         
-        # Tambah kolom Total Keseluruhan
-        df_final['TOTAL KESELURUHAN'] = df_final.iloc[:, 2:].sum(axis=1)
+        # Kolom 'TOTAL KESELURUHAN' dihilangkan sesuai permintaan
         
         # Metrik Ringkasan
         col_m1, col_m2, col_m3 = st.columns(3)
